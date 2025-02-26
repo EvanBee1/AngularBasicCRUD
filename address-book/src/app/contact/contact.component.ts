@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Contact } from '../contact.model';
 import { ContactService } from '../contact.service';
 
 @Component({
@@ -8,8 +7,9 @@ import { ContactService } from '../contact.service';
   styleUrls: ['./contact.component.css']
 })
 export class ContactComponent implements OnInit {
-  contacts: Contact[] = [];
-  currentContact: Contact | null = null;
+  newContact = { id: 0, name: '', email: '', phone: '' };
+  currentContact: any = null;
+  contacts: any[] = [];
 
   constructor(private contactService: ContactService) {}
 
@@ -21,22 +21,31 @@ export class ContactComponent implements OnInit {
     this.contacts = this.contactService.getContacts();
   }
 
-  addContact(name: string, email: string, phone: string): void {
-    const newContact: Contact = { id: 0, name, email, phone };
-    this.contactService.addContact(newContact);
-    this.loadContacts();
-  }
-
-  editContact(contact: Contact): void {
-    this.currentContact = { ...contact };
+  addContact(): void {
+    if (this.newContact.name && this.newContact.email && this.newContact.phone) {
+      this.newContact.id = this.contacts.length + 1;
+      this.contactService.addContact({ ...this.newContact });
+      this.loadContacts();
+      this.resetForm();
+    }
   }
 
   updateContact(): void {
-    if (this.currentContact) {
-      this.contactService.updateContact(this.currentContact);
+    if (this.newContact) {
+      this.contactService.updateContact({ ...this.newContact });
       this.currentContact = null;
       this.loadContacts();
     }
+  }
+
+  editContact(contact: any): void {
+    this.currentContact = { ...contact };
+    this.newContact = { ...contact };
+  }
+
+  cancelEdit(): void {
+    this.currentContact = null;
+    this.resetForm();
   }
 
   deleteContact(id: number): void {
@@ -44,7 +53,7 @@ export class ContactComponent implements OnInit {
     this.loadContacts();
   }
 
-  cancelEdit(): void {
-    this.currentContact = null;
+  resetForm(): void {
+    this.newContact = { id: 0, name: '', email: '', phone: '' };
   }
 }
