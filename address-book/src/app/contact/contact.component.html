@@ -1,0 +1,19 @@
+<div>
+    <h2>Address Book</h2>
+  
+    <form (ngSubmit)="currentContact ? updateContact() : addContact(name.value, email.value, phone.value)">
+      <input type="text" #name placeholder="Name" [ngModel]="currentContact?.name" name="name" required>
+      <input type="email" #email placeholder="Email" [ngModel]="currentContact?.email" name="email" required>
+      <input type="text" #phone placeholder="Phone" [ngModel]="currentContact?.phone" name="phone" required>
+      <button type="submit">{{ currentContact ? 'Update' : 'Add' }} Contact</button>
+      <button type="button" (click)="cancelEdit()" *ngIf="currentContact">Cancel</button>
+    </form>
+  
+    <ul>
+      <li *ngFor="let contact of contacts">
+        {{ contact.name }} - {{ contact.email }} - {{ contact.phone }}
+        <button (click)="editContact(contact)">Edit</button>
+        <button (click)="deleteContact(contact.id)">Delete</button>
+      </li>
+    </ul>
+  </div>
